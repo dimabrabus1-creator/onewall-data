@@ -1,7 +1,13 @@
-    [
-      {
-        "title": "Cyber City",
-        "category": "Cities",
-        "imageURL": "https://res.cloudinary.com/dqfyymnjw/image/upload/v1779187269/wallpaper5_ayzmmp.png"
-      }
-    ]
+[
+  {
+    "title": "Cyber City",
+    "category": "Cities",
+    "imageURL": "https://res.cloudinary.com/dqfyymnjw/image/upload/v1779187269/wallpaper5_ayzmmp.png"
+  },
+
+  {
+    "title": "Night Car",
+    "category": "Cars",
+    "imageURL": "https://res.cloudinary.com/dqfyymnjw/image/upload/v1779195673/wallpaper7_zqb0vr.webp"
+  }
+]
