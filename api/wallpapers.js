@@ -7,7 +7,7 @@ export default async function handler(req, res) {
 
   try {
     const response = await fetch(
-      `https://api.cloudinary.com/v1_1/${cloudName}/resources/image?max_results=100&tags=true`,
+      `https://api.cloudinary.com/v1_1/${cloudName}/resources/image?max_results=100`,
       {
         headers: {
           Authorization: `Basic ${auth}`,
@@ -17,16 +17,22 @@ export default async function handler(req, res) {
 
     const data = await response.json()
 
-    const wallpapers = data.resources.map((item) => ({
-      title: item.public_id.split("/").pop(),
-      imageURL: item.secure_url,
-      category: item.tags && item.tags.length > 0 ? item.tags[0] : "Other",
-    }))
+    const wallpapers = data.resources.map((item) => {
+      const parts = item.public_id.split("/")
+      const fileName = parts[parts.length - 1]
+      const category = parts.length > 1 ? parts[parts.length - 2] : "Other"
+
+      return {
+        title: fileName,
+        imageURL: item.secure_url,
+        category: category,
+      }
+    })
 
     res.status(200).json(wallpapers)
   } catch (error) {
     res.status(500).json({
-      error: error.message
+      error: error.message,
     })
   }
 }
