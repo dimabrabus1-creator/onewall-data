@@ -20,13 +20,19 @@ export default async function handler(req, res) {
     const wallpapers = data.resources.map((item) => ({
       title: item.public_id.split("/").pop(),
       imageURL: item.secure_url,
-      category: item.tags && item.tags.length > 0 ? item.tags[0] : "Other",
+
+      category:
+        item.tags && item.tags.length > 0
+          ? item.tags[0]
+          : "Other",
+
+      tags: item.tags || [],
     }))
 
     res.status(200).json(wallpapers)
   } catch (error) {
     res.status(500).json({
-      error: error.message
+      error: error.message,
     })
   }
 }
