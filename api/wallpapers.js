@@ -19,13 +19,8 @@ export default async function handler(req, res) {
 
     const wallpapers = data.resources.map((item) => {
       const parts = item.public_id.split("/")
-
       const title = parts.pop()
-
-      const category =
-        parts.length > 0
-          ? parts[parts.length - 1]
-          : "Other"
+      const category = parts.length > 0 ? parts[parts.length - 1] : "Other"
 
       return {
         title,
