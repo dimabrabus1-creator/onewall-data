@@ -5,6 +5,29 @@ export default async function handler(req, res) {
 
   const auth = Buffer.from(`${apiKey}:${apiSecret}`).toString("base64")
 
+  const categories = [
+    "art",
+    "brands",
+    "cars",
+    "cartoon",
+    "cities",
+    "holidays",
+    "interior",
+    "landscapes",
+    "space",
+    "trading",
+    "vibe",
+  ]
+
+  const formatCategory = (category) => {
+    if (!category) return "Other"
+
+    return category
+      .split(" ")
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ")
+  }
+
   try {
     const response = await fetch(
       `https://api.cloudinary.com/v1_1/${cloudName}/resources/image?max_results=100&tags=true`,
@@ -18,19 +41,17 @@ export default async function handler(req, res) {
     const data = await response.json()
 
     const wallpapers = data.resources.map((item) => {
-      const publicParts = item.public_id ? item.public_id.split("/") : []
-      const title = publicParts.pop() || "Untitled"
+      const tags = item.tags || []
 
-      const folder =
-        item.asset_folder ||
-        item.folder ||
-        (publicParts.length > 0 ? publicParts[publicParts.length - 1] : "")
+      const categoryTag = tags.find((tag) =>
+        categories.includes(tag.toLowerCase())
+      )
 
       return {
-        title,
+        title: item.public_id.split("/").pop(),
         imageURL: item.secure_url,
-        category: folder || "Other",
-        tags: item.tags || [],
+        category: formatCategory(categoryTag),
+        tags,
       }
     })
 
