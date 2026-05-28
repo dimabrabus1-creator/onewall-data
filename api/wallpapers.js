@@ -17,17 +17,23 @@ export default async function handler(req, res) {
 
     const data = await response.json()
 
-    const wallpapers = data.resources.map((item) => ({
-      title: item.public_id.split("/").pop(),
-      imageURL: item.secure_url,
+    const wallpapers = data.resources.map((item) => {
+      const parts = item.public_id.split("/")
 
-      category:
-        item.tags && item.tags.length > 0
-          ? item.tags[0]
-          : "Other",
+      const title = parts.pop()
 
-      tags: item.tags || [],
-    }))
+      const category =
+        parts.length > 0
+          ? parts[parts.length - 1]
+          : "Other"
+
+      return {
+        title,
+        imageURL: item.secure_url,
+        category,
+        tags: item.tags || [],
+      }
+    })
 
     res.status(200).json(wallpapers)
   } catch (error) {
