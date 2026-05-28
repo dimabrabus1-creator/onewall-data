@@ -28,19 +28,38 @@ export default async function handler(req, res) {
       .join(" ")
   }
 
-  try {
-    const response = await fetch(
-      `https://api.cloudinary.com/v1_1/${cloudName}/resources/image?max_results=100&tags=true`,
-      {
+  async function fetchAllResources() {
+    let allResources = []
+    let nextCursor = null
+
+    do {
+      let url =
+        `https://api.cloudinary.com/v1_1/${cloudName}/resources/image?max_results=500&tags=true`
+
+      if (nextCursor) {
+        url += `&next_cursor=${nextCursor}`
+      }
+
+      const response = await fetch(url, {
         headers: {
           Authorization: `Basic ${auth}`,
         },
-      }
-    )
+      })
 
-    const data = await response.json()
+      const data = await response.json()
 
-    const wallpapers = data.resources.map((item) => {
+      allResources = [...allResources, ...(data.resources || [])]
+
+      nextCursor = data.next_cursor
+    } while (nextCursor)
+
+    return allResources
+  }
+
+  try {
+    const resources = await fetchAllResources()
+
+    const wallpapers = resources.map((item) => {
       const tags = item.tags || []
 
       const categoryTag = tags.find((tag) =>
