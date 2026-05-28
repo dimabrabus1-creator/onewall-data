@@ -18,14 +18,18 @@ export default async function handler(req, res) {
     const data = await response.json()
 
     const wallpapers = data.resources.map((item) => {
-      const parts = item.public_id.split("/")
-      const title = parts.pop()
-      const category = parts.length > 0 ? parts[parts.length - 1] : "Other"
+      const publicParts = item.public_id ? item.public_id.split("/") : []
+      const title = publicParts.pop() || "Untitled"
+
+      const folder =
+        item.asset_folder ||
+        item.folder ||
+        (publicParts.length > 0 ? publicParts[publicParts.length - 1] : "")
 
       return {
         title,
         imageURL: item.secure_url,
-        category,
+        category: folder || "Other",
         tags: item.tags || [],
       }
     })
